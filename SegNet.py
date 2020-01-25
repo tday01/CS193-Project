@@ -305,21 +305,21 @@ class SegNet:
                 if type(images_index) == list:
                     indexes = images_index
                 else:
-                    indexes = random.sample(range(367),images_index)
+                    indexes = random.sample(range(5274),images_index)
                 #indexes = [0,75,150,225,300]
             elif (dataset_type=='VAL'):
                 test_type_path = self.config["VAL_FILE"]
                 if type(images_index) == list:
                     indexes = images_index
                 else:
-                    indexes = random.sample(range(101),images_index)
+                    indexes = random.sample(range(1758),images_index)
                 #indexes = [0,25,50,75,100]
             elif (dataset_type=='TEST'):
                 test_type_path = self.config["TEST_FILE"]
                 if type(images_index) == list:
                     indexes = images_index
                 else:
-                    indexes = random.sample(range(233),images_index)
+                    indexes = random.sample(range(1758),images_index)
                 #indexes = [0,50,100,150,200]
 
             # Load images

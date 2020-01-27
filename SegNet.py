@@ -208,8 +208,7 @@ class SegNet:
                 self.images_val, self.labels_val = dataset_inputs(val_image_filename, val_label_filename, batch_size,
                                                                   self.config)
 
-            loss, accuracy, prediction = cal_loss(logits=self.logits, labels=self.labels_pl,
-                                                     number_class=self.num_classes)
+            loss, accuracy, prediction = cal_loss(logits=self.logits, labels=self.labels_pl)
             train, global_step = train_op(total_loss=loss, opt=self.opt)
 
             summary_op = tf.summary.merge_all()
@@ -238,6 +237,13 @@ class SegNet:
                     self.train_accuracy.append(_accuracy)
                     print("Iteration {}: Train Loss{:6.3f}, Train Accu {:6.3f}".format(step, self.train_loss[-1],
                                                                                        self.train_accuracy[-1]))
+                    # save model
+                    with self.sess.as_default():
+                        with self.graph.as_default():
+                            self.saver = tf.train.Saver()
+                            checkpoint_path = os.path.join(self.saved_dir, 'model.ckpt')
+                            self.saver.save(self.sess, checkpoint_path, global_step=self.model_version)
+                            self.model_version += 1
 
                     if step % 100 == 0:
                         conv_classifier = self.sess.run(self.logits, feed_dict=feed_dict)
@@ -295,6 +301,9 @@ class SegNet:
             # Restore saved session
             saver = tf.train.Saver()
             saver.restore(sess, train_dir)
+            
+            #saver = tf.train.import_meta_graph('./segnet_lungimg_model/model.ckpt-14.meta')
+            #saver.restore(sess,'./segnet_lungimg_model/model.ckpt-14')
             
             _, _, prediction = cal_loss(logits=self.logits,
                                         labels=self.labels_pl)
@@ -586,6 +595,7 @@ class SegNet:
             return acc_final, iu_final, iu_mean_final, prob_variance, logit_variance, pred_tot, var_tot
             
     def save(self):
+        print("save model")
         np.save(os.path.join(self.saved_dir, "Data", "trainloss"), self.train_loss)
         np.save(os.path.join(self.saved_dir, "Data", "trainacc"), self.train_accuracy)
         np.save(os.path.join(self.saved_dir, "Data", "valloss"), self.val_loss)

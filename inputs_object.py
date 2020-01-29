@@ -109,5 +109,5 @@ def get_all_test_data(im_list, la_list):
         labels.append(la)
         index = index + 1
 
-    print('%d LungImg test images are loaded' % index)
+    print('%d LungIm test images are loaded' % index)
     return images, labels

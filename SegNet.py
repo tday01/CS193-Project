@@ -243,16 +243,16 @@ class SegNet:
                             self.saver = tf.train.Saver()
                             checkpoint_path = os.path.join(self.saved_dir, 'model.ckpt')
                             self.saver.save(self.sess, checkpoint_path, global_step=self.model_version)
-                            self.model_version += 1
+                            #self.model_version += 1
 
-                    if step % 100 == 0:
+                    if step % 3 == 0:
                         conv_classifier = self.sess.run(self.logits, feed_dict=feed_dict)
                         print('per_class accuracy by logits in training time',
                               per_class_acc(conv_classifier, label_batch, self.num_classes))
                         # per_class_acc is a function from utils
                         train_writer.add_summary(summary, step)
 
-                    if step % 1000 == 0:
+                    if step % 5 == 0:
                         print("start validating.......")
                         _val_loss = []
                         _val_acc = []
@@ -300,10 +300,7 @@ class SegNet:
             
             # Restore saved session
             saver = tf.train.Saver()
-            saver.restore(sess, train_dir)
-            
-            #saver = tf.train.import_meta_graph('./segnet_lungimg_model/model.ckpt-14.meta')
-            #saver.restore(sess,'./segnet_lungimg_model/model.ckpt-14')
+            saver.restore(sess, "./segnet_lungimg_model/model.ckpt-0")
             
             _, _, prediction = cal_loss(logits=self.logits,
                                         labels=self.labels_pl)
@@ -595,7 +592,6 @@ class SegNet:
             return acc_final, iu_final, iu_mean_final, prob_variance, logit_variance, pred_tot, var_tot
             
     def save(self):
-        print("save model")
         np.save(os.path.join(self.saved_dir, "Data", "trainloss"), self.train_loss)
         np.save(os.path.join(self.saved_dir, "Data", "trainacc"), self.train_accuracy)
         np.save(os.path.join(self.saved_dir, "Data", "valloss"), self.val_loss)

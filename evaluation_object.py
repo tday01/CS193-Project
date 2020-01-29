@@ -11,6 +11,7 @@ def cal_loss(logits, labels):
     loss_weight = np.array([
         0.2595,
         0.1826,
+
     ])
     # class 0 to 11, but the class 11 is ignored, so maybe the class 11 is background!
 
